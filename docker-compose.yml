@@ -1,0 +1,43 @@
+version: "3"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: "go-users"
+    depends_on:
+      - mysql
+    volumes:
+      - ./src:/go/src/github.com/gnemes/go-users/
+    command: "watcher main.go"
+    # command:
+    #   [
+    #     "dlv",
+    #     "debug",
+    #     "github.com/gnemes/go-users/",
+    #     "--listen=:1541",
+    #     "--headless=true",
+    #     "--api-version=2",
+    #     "--log",
+    #   ]
+    ports:
+      - "8081:8081"
+      - "1541:1541"
+    env_file:
+      - ./config/dev.env
+  mysql:
+    image: mariadb:10.5.8
+    container_name: go_users_mariadb
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=api_reco_dev
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+volumes:
+  mysql-data:
+    driver: "local"
