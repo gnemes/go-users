@@ -33,6 +33,7 @@ func Listen() {
 
 func (s *Server) Routes(cl RouteClousure) http.Handler {
 	s.Router.Use(middleware.ApplicationJsonMiddleware)
+	// s.Router.Use(middleware.CredentialsMiddleware)
 
 	usersRouter := s.Router.PathPrefix("/users").Subrouter()
 	usersRouter.HandleFunc("/{id}", cl("[GET]/users/{id}", di.GetInstance().Get("GetUserControllerHttp").(*controllerhttp.Get).Execute)).Methods("GET")

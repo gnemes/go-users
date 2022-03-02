@@ -11,6 +11,8 @@ import (
 	// Logger
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 	loggerimpl "github.com/gnemes/go-users/Infrastructure/Services/Logger"
+	uuid "github.com/gnemes/go-users/Domain/Services/Uuid"
+	uuidImpl "github.com/gnemes/go-users/Infrastructure/Services/Uuid"
 )
 
 var Base = []di.Def{
@@ -35,6 +37,17 @@ var Base = []di.Def{
 				log.Fatalf("Could not instantiate log %s", err.Error())
 			}
 			return l.(logger.Logger), nil
+		},
+	},
+	{
+		Name:  "Uuid",
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			instance, errUuid := uuidImpl.NewUuid()
+			if errUuid != nil {
+				log.Fatalf("Could not instantiate uuid %s", errUuid.Error())
+			}
+			return instance.(uuid.Uuid), nil
 		},
 	},
 }

@@ -2,12 +2,10 @@ package controllerhttp
 
 import (
 	"net/http"
-
-	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 )
 
 type Get struct {
-	Logger logger.Logger
+	*Base
 }
 
 func (c *Get) Execute(w http.ResponseWriter, r *http.Request) {

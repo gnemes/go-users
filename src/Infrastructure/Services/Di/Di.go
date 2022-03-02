@@ -43,7 +43,7 @@ func BuildContainer() {
 
 	builder.Add(Base...)
 	// builder.Add(Clients...)
-	builder.Add(Controllers...)
+	builder.Add(ControllersHttp...)
 	// builder.Add(Presenters...)
 	// builder.Add(Repositories...)
 	// builder.Add(Serializers...)
