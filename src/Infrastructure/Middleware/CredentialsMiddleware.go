@@ -3,8 +3,9 @@ package middleware
 import (
 	"net/http"
 
+	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
+	di "github.com/gnemes/go-users/Infrastructure/Services/Di"
 	domainerrors "github.com/gnemes/go-users/Domain/Errors"
-	httpclientutils "github.com/gnemes/go-users/Infrastructure/Controller/Http/Util"
 )
 
 const (
@@ -20,7 +21,8 @@ func CredentialsMiddleware(next http.Handler) http.Handler {
 		if userID == "" || platformName == "" {
 			// Missing required headers
 			err := &domainerrors.UnauthorizeError{Err: "Unauthorized"}
-			httpclientutils.WriteError(err, w)
+			baseController := di.GetInstance().Get("BaseControllerHttp").(*controllerhttp.Base)
+			baseController.WriteHttpError(err, w)
 		} else {
 
 		}

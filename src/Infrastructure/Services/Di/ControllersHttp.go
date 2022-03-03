@@ -5,6 +5,7 @@ import (
 
 	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
+	serializers "github.com/gnemes/go-users/Infrastructure/Serializers"
 )
 
 var ControllersHttp = []di.Def{
@@ -23,6 +24,7 @@ var ControllersHttp = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Base{
 				Logger: ctn.Get("Logger").(logger.Logger),
+				ErrorSerializer: ctn.Get("HttpErrorSerializer").(*serializers.ErrorSerializer),
 			}, nil
 		},
 	},
