@@ -7,10 +7,12 @@ import (
 )
 
 func main() {
-	logger := di.GetInstance().Get("Logger").(logger.Logger)
+	container := di.BuildDi()
+
+	logger := container.Get("Logger").(logger.Logger)
 	logger.Infof("----- Starting Web Server... -----")
 	defer logger.Infof("----- Ending Web Server -----")
-	defer di.DeleteInstance()
+	defer container.Delete()
 
-	Listen()
+	listen(container)
 }

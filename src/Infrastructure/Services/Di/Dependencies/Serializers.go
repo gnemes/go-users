@@ -1,7 +1,7 @@
-package di
+package didependencies
 
 import (
-	"github.com/sarulabs/di"
+	di "github.com/sarulabs/di/v2"
 
 	serializers "github.com/gnemes/go-users/Infrastructure/Serializers"
 	uuid "github.com/gnemes/go-users/Domain/Services/Uuid"
@@ -10,7 +10,8 @@ import (
 var Serializers = []di.Def{
 	{
 		Name:  "HttpErrorSerializer",
-		Scope: di.App,
+		Scope: di.Request,
+		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &serializers.ErrorSerializer{
 				Uuid: ctn.Get("Uuid").(uuid.Uuid),

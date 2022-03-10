@@ -3,9 +3,15 @@ package middleware
 import (
     "strings"
     "net/http"
+
+    logger "github.com/gnemes/go-users/Domain/Services/Logger"
 )
 
-func TrimSlashMiddleware(next http.Handler) http.Handler {
+type TrimSlashMiddleware struct {
+    Logger logger.Logger
+}
+
+func (m *TrimSlashMiddleware) TrimSlashMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
         next.ServeHTTP(w, r)

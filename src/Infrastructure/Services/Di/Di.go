@@ -1,58 +1,19 @@
 package di
 
 import (
-	"sync"
+	di "github.com/sarulabs/di/v2"
 
-	"github.com/sarulabs/di"
+	didependencies "github.com/gnemes/go-users/Infrastructure/Services/Di/Dependencies"
 )
 
-var once sync.Once
-var instance *Container
-
-// Container for di in app
-type Container struct {
-	Builder   *di.Builder
-	Container di.Container
-}
-
-// GetInstance and initialize container singleton instance
-func GetInstance() *Container {
-
-	once.Do(func() {
-		BuildContainer()
-	})
-
-	return instance
-}
-
-// DeleteInstance delete container instance
-func DeleteInstance() {
-	instance.Container.Delete()
-}
-
-// Get returns an interface that can be cast afterwards.
-// If the object can not be created, the Get function panics.
-// obj := ctn.Get("my-object").(*MyObject)
-func (c *Container) Get(key string) interface{} {
-	return c.Container.Get(key)
-}
-
-// BuildContainer instance
-func BuildContainer() {
+func BuildDi() di.Container {
 	builder, _ := di.NewBuilder()
 
-	builder.Add(Base...)
-	// builder.Add(Clients...)
-	builder.Add(ControllersHttp...)
-	// builder.Add(Presenters...)
-	// builder.Add(Repositories...)
-	builder.Add(Serializers...)
-	// builder.Add(Services...)
-	// builder.Add(UseCases...)
-
-	container := new(Container)
-	container.Builder = builder
-	container.Container = builder.Build()
-
-	instance = container
+	builder.Add(didependencies.Base...)
+	builder.Add(didependencies.ControllersHttp...)
+	builder.Add(didependencies.Middlewares...)
+	builder.Add(didependencies.Repositories...)
+	builder.Add(didependencies.Serializers...)
+	
+	return builder.Build()
 }

@@ -1,9 +1,9 @@
-package di
+package didependencies
 
 import (
 	"log"
 	
-	"github.com/sarulabs/di"
+	di "github.com/sarulabs/di/v2"
 
 	// Config
 	config "github.com/gnemes/go-users/Infrastructure/Services/Config"

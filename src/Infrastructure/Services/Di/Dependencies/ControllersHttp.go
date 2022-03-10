@@ -1,7 +1,7 @@
-package di
+package didependencies
 
 import (
-	"github.com/sarulabs/di"
+	di "github.com/sarulabs/di/v2"
 
 	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
@@ -11,7 +11,8 @@ import (
 var ControllersHttp = []di.Def{
 	{
 		Name:  "GetUserControllerHttp",
-		Scope: di.App,
+		Scope: di.Request,
+		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Get{
 				Base: ctn.Get("BaseControllerHttp").(*controllerhttp.Base),
@@ -20,9 +21,20 @@ var ControllersHttp = []di.Def{
 	},
 	{
 		Name:  "BaseControllerHttp",
-		Scope: di.App,
+		Scope: di.Request,
+		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Base{
+				Logger: ctn.Get("Logger").(logger.Logger),
+			}, nil
+		},
+	},
+	{
+		Name:  "ErrorControllerHttp",
+		Scope: di.Request,
+		Unshared: true,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return &controllerhttp.Error{
 				Logger: ctn.Get("Logger").(logger.Logger),
 				ErrorSerializer: ctn.Get("HttpErrorSerializer").(*serializers.ErrorSerializer),
 			}, nil

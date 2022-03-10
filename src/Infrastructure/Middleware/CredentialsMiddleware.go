@@ -4,27 +4,45 @@ import (
 	"net/http"
 
 	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
-	di "github.com/gnemes/go-users/Infrastructure/Services/Di"
 	domainerrors "github.com/gnemes/go-users/Domain/Errors"
+	logger "github.com/gnemes/go-users/Domain/Services/Logger"
+	repositories "github.com/gnemes/go-users/Domain/Model/Repositories"
 )
 
 const (
-	UserHeader     = "X-USER-ID"
-	PlatformHeader = "X-PLATFORM-NAME"
+	userHeader     = "X-USER-ID"
+	platformHeader = "X-PLATFORM-ID"
 )
 
-func CredentialsMiddleware(next http.Handler) http.Handler {
+type CredentialsMiddleware struct {
+	Logger             logger.Logger
+	UserRepository     repositories.UserRepository
+	PlatformRepository repositories.PlatformRepository
+	ErrorController    *controllerhttp.Error
+}
+
+func (m *CredentialsMiddleware) CredentialsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Header.Get(UserHeader)
-		platformName := r.Header.Get(PlatformHeader)
+		userHeader := r.Header.Get(userHeader)
+		platformHeader := r.Header.Get(platformHeader)
 
-		if userID == "" || platformName == "" {
+		if userHeader == "" || platformHeader == "" {
 			// Missing required headers
-			err := &domainerrors.UnauthorizeError{Err: "Unauthorized"}
-			baseController := di.GetInstance().Get("BaseControllerHttp").(*controllerhttp.Base)
-			baseController.WriteHttpError(err, w)
+			m.ErrorController.WriteHttpError(&domainerrors.UnauthorizeError{Err: "Unauthorized"}, w)
 		} else {
+			user := m.UserRepository.FindByID(userHeader)
+			if user == nil {
+				// User not found
+			}
 
+			platform := m.PlatformRepository.FindByID(platformHeader)
+			if platform == nil {
+				// Platform not found
+			}
+
+			if user.PlatformID != platform.ID {
+				// User does not belongs to platform
+			}
 		}
 	})
 }
