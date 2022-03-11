@@ -18,12 +18,12 @@ func listen(container di.Container) {
 }
 
 func routes(container di.Container, s *mux.Router) http.Handler {
-	// Get middlewares
+	// Get App middlewares
 	jsonApiHeaderMiddleware := container.Get("JsonApiHeaderMiddleware").(*middleware.JsonApiHeaderMiddleware)
 	trimSlashMiddleware := container.Get("TrimSlashMiddleware").(*middleware.TrimSlashMiddleware)
 
-	s.Use(trimSlashMiddleware.TrimSlashMiddleware)
-	s.Use(jsonApiHeaderMiddleware.JsonApiHeaderMiddleware)
+	s.Use(trimSlashMiddleware.Execute)
+	s.Use(jsonApiHeaderMiddleware.Execute)
 
 	// /users router
 	usersRouter := s.PathPrefix("/users").Subrouter()
@@ -38,8 +38,10 @@ func fetchHandleFunc(container di.Container, controller string) func(w http.Resp
 	requestContainer, _ := container.SubContainer()
 	defer requestContainer.Delete()
 
+	// Get Request middlewares
 	credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
+	requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)
 	
 	controllerInstance := requestContainer.Get(controller).(*controllerhttp.Get)
-	return credentialsMiddleware.CredentialsMiddleware(controllerInstance.Execute)
+	return requestIDMiddleware.Execute(credentialsMiddleware.Execute(controllerInstance.Execute))
 }

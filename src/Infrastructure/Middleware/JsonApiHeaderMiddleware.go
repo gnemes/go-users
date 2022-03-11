@@ -14,7 +14,7 @@ const (
 	contentType = "application/json"
 )
 
-func (m *JsonApiHeaderMiddleware) JsonApiHeaderMiddleware(next http.Handler) http.Handler {
+func (m *JsonApiHeaderMiddleware) Execute(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		m.Logger.Debugf("Middleware / JsonApiHeaderMiddleware()")
 		defer m.Logger.Debugf("Middleware / JsonApiHeaderMiddleware() ending...")

@@ -11,7 +11,7 @@ type TrimSlashMiddleware struct {
     Logger logger.Logger
 }
 
-func (m *TrimSlashMiddleware) TrimSlashMiddleware(next http.Handler) http.Handler {
+func (m *TrimSlashMiddleware) Execute(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         m.Logger.Debugf("Middleware / TrimSlashMiddleware()")
 		defer m.Logger.Debugf("Middleware / TrimSlashMiddleware() ending...")

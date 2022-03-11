@@ -1,6 +1,8 @@
 package context
 
 import (
+	"errors"
+
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 )
 
@@ -17,14 +19,11 @@ func (c *Context) Get(key string) interface{} {
 	}
 }
 
-func NewQuery() *Context {
-	var Items map[string]interface{}
+func (c *Context) Add(key string, value interface{}) error {
+	if _, ok := c.Items[key]; ok {
+		return errors.New("Item already exists in context.")
+	} 
 
-	Items = make(map[string]interface{})
-
-	newContext := Context{
-		Items: Items,
-	}
-
-	return &newContext
+	c.Items[key] = value
+	return nil
 }
