@@ -43,15 +43,18 @@ func fetchHandleFunc(container di.Container, controller string) func(w http.Resp
 		credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
 		requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)
 		requestQueryParserMiddleware := requestContainer.Get("RequestQueryParserMiddleware").(*middleware.RequestQueryParserMiddleware)
+		requestedEntityIDMiddleware := requestContainer.Get("RequestedEntityIDMiddleware").(*middleware.RequestedEntityIDMiddleware)
 		
 		// Get controller
 		controllerInstance := requestContainer.Get(controller).(*controllerhttp.Get)
 
 		// Compose middlewares + controller handler
 		handler := requestQueryParserMiddleware.Execute(
-						requestIDMiddleware.Execute(
-							credentialsMiddleware.Execute(
-								controllerInstance.Execute,
+						requestedEntityIDMiddleware.Execute(
+							requestIDMiddleware.Execute(
+								credentialsMiddleware.Execute(
+									controllerInstance.Execute,
+								),
 							),
 						),
 					)
