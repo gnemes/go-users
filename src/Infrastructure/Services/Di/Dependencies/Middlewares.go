@@ -13,6 +13,16 @@ import (
 
 var Middlewares = []di.Def{
 	{
+		Name:  "RequestedEntityIDMiddleware",
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return &middlewares.RequestedEntityIDMiddleware{
+				Logger:  ctn.Get("Logger").(logger.Logger),
+				Context: ctn.Get("Context").(*context.Context),
+			}, nil
+		},
+	},
+	{
 		Name:  "CredentialsMiddleware",
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
