@@ -26,6 +26,17 @@ var Middlewares = []di.Def{
 		},
 	},
 	{
+		Name:  "RequestQueryParserMiddleware",
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return &middlewares.RequestQueryParserMiddleware{
+				Logger:             ctn.Get("Logger").(logger.Logger),
+				ErrorController:    ctn.Get("ErrorControllerHttp").(*controllerhttp.Error),
+				Context:            ctn.Get("Context").(*context.Context),
+			}, nil
+		},
+	},
+	{
 		Name:  "JsonApiHeaderMiddleware",
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
