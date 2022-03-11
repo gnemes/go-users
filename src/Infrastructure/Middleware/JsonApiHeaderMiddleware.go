@@ -16,6 +16,9 @@ const (
 
 func (m *JsonApiHeaderMiddleware) JsonApiHeaderMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		m.Logger.Debugf("Middleware / JsonApiHeaderMiddleware()")
+		defer m.Logger.Debugf("Middleware / JsonApiHeaderMiddleware() ending...")
+		
 		w.Header().Add("Content-Type", contentType)
 		next.ServeHTTP(w, r)
 	})

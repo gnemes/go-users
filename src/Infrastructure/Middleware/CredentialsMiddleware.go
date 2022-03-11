@@ -21,15 +21,20 @@ type CredentialsMiddleware struct {
 	ErrorController    *controllerhttp.Error
 }
 
-func (m *CredentialsMiddleware) CredentialsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (m *CredentialsMiddleware) CredentialsMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m.Logger.Debugf("Middleware / CredentialsMiddleware()")
+		defer m.Logger.Debugf("Middleware / CredentialsMiddleware() ending...")
+
 		userHeader := r.Header.Get(userHeader)
 		platformHeader := r.Header.Get(platformHeader)
 
 		if userHeader == "" || platformHeader == "" {
 			// Missing required headers
+			m.Logger.Errorf("Unauthorized request.")
 			m.ErrorController.WriteHttpError(&domainerrors.UnauthorizeError{Err: "Unauthorized"}, w)
 		} else {
+			/*
 			user := m.UserRepository.FindByID(userHeader)
 			if user == nil {
 				// User not found
@@ -43,6 +48,9 @@ func (m *CredentialsMiddleware) CredentialsMiddleware(next http.Handler) http.Ha
 			if user.PlatformID != platform.ID {
 				// User does not belongs to platform
 			}
+			*/
+
+			next(w, r)
 		}
-	})
+	}
 }

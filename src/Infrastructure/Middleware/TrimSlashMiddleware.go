@@ -13,6 +13,9 @@ type TrimSlashMiddleware struct {
 
 func (m *TrimSlashMiddleware) TrimSlashMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        m.Logger.Debugf("Middleware / TrimSlashMiddleware()")
+		defer m.Logger.Debugf("Middleware / TrimSlashMiddleware() ending...")
+
         r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
         next.ServeHTTP(w, r)
     })

@@ -24,7 +24,7 @@ var Middlewares = []di.Def{
 	},
 	{
 		Name:  "JsonApiHeaderMiddleware",
-		Scope: di.Request,
+		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &middlewares.JsonApiHeaderMiddleware{
 				Logger: ctn.Get("Logger").(logger.Logger),
@@ -33,7 +33,7 @@ var Middlewares = []di.Def{
 	},
 	{
 		Name:  "TrimSlashMiddleware",
-		Scope: di.Request,
+		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &middlewares.TrimSlashMiddleware{
 				Logger: ctn.Get("Logger").(logger.Logger),
