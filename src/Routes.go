@@ -5,37 +5,57 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	di "github.com/sarulabs/di/v2"
 
-	di "github.com/gnemes/go-users/Infrastructure/Services/Di"
-	middleware "github.com/gnemes/go-users/Infrastructure/Middleware"
 	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
+	middleware "github.com/gnemes/go-users/Infrastructure/Middleware"
 )
 
-type Server struct {
-	Router *mux.Router
+func listen(container di.Container) {
+	Router := mux.NewRouter().StrictSlash(true)
+
+	log.Fatal(http.ListenAndServe(":8081", routes(container, Router)))
 }
 
-type RouteClousure func(txName string, f func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request)
+func routes(container di.Container, s *mux.Router) http.Handler {
+	// Get App middlewares
+	jsonApiHeaderMiddleware := container.Get("JsonApiHeaderMiddleware").(*middleware.JsonApiHeaderMiddleware)
+	trimSlashMiddleware := container.Get("TrimSlashMiddleware").(*middleware.TrimSlashMiddleware)
 
-func IdentityClousure(txName string, f func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
-	return f
+	s.Use(trimSlashMiddleware.Execute)
+	s.Use(jsonApiHeaderMiddleware.Execute)
+
+	// /users router
+	usersRouter := s.PathPrefix("/users").Subrouter()
+
+	// GET - /users/{id}
+	usersRouter.HandleFunc("/{id}", fetchHandleFunc(container, "GetUserControllerHttp")).Methods("GET")
+	
+	return s
 }
 
-func Listen() {
-	routesClousure := IdentityClousure
+func fetchHandleFunc(container di.Container, controller string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		requestContainer, _ := container.SubContainer()
+		defer requestContainer.Delete()
+	
+		// Get Request middlewares
+		credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
+		requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)
+		requestQueryParserMiddleware := requestContainer.Get("RequestQueryParserMiddleware").(*middleware.RequestQueryParserMiddleware)
+		
+		// Get controller
+		controllerInstance := requestContainer.Get(controller).(*controllerhttp.Get)
 
-	s := &Server{
-		Router: mux.NewRouter().StrictSlash(true),
+		// Compose middlewares + controller handler
+		handler := requestQueryParserMiddleware.Execute(
+						requestIDMiddleware.Execute(
+							credentialsMiddleware.Execute(
+								controllerInstance.Execute,
+							),
+						),
+					)
+
+		handler(w, r)
 	}
-
-	log.Fatal(http.ListenAndServe(":8081", s.Routes(routesClousure)))
-}
-
-func (s *Server) Routes(cl RouteClousure) http.Handler {
-	s.Router.Use(middleware.ApplicationJsonMiddleware)
-
-	usersRouter := s.Router.PathPrefix("/users").Subrouter()
-	usersRouter.HandleFunc("/{id}", cl("[GET]/users/{id}", di.GetInstance().Get("GetUserControllerHttp").(*controllerhttp.Get).Execute)).Methods("GET")
-
-	return middleware.TrimSlashMiddleware(s.Router)
 }
