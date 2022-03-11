@@ -35,13 +35,16 @@ func routes(container di.Container, s *mux.Router) http.Handler {
 }
 
 func fetchHandleFunc(container di.Container, controller string) func(w http.ResponseWriter, r *http.Request) {
-	requestContainer, _ := container.SubContainer()
-	defer requestContainer.Delete()
-
-	// Get Request middlewares
-	credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
-	requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)
+	return func(w http.ResponseWriter, r *http.Request) {
+		requestContainer, _ := container.SubContainer()
+		defer requestContainer.Delete()
 	
-	controllerInstance := requestContainer.Get(controller).(*controllerhttp.Get)
-	return requestIDMiddleware.Execute(credentialsMiddleware.Execute(controllerInstance.Execute))
+		// Get Request middlewares
+		credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
+		requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)
+		
+		controllerInstance := requestContainer.Get(controller).(*controllerhttp.Get)
+		handler := requestIDMiddleware.Execute(credentialsMiddleware.Execute(controllerInstance.Execute))
+		handler(w, r)
+	}
 }

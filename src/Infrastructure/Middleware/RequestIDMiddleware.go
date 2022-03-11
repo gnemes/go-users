@@ -22,6 +22,7 @@ func (m *RequestIDMiddleware) Execute(next func(w http.ResponseWriter, r *http.R
         requestID := m.Uuid.New()
         m.Context.Add("RequestID", requestID)
 
+        m.Logger.Debugf("Request ID: %s", requestID)
         next(w, r)
     }
 }

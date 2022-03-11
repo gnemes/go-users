@@ -3,6 +3,7 @@ package didependencies
 import (
 	di "github.com/sarulabs/di/v2"
 
+	context "github.com/gnemes/go-users/Domain/Services/Context"
 	controllerhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http"
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 	serializers "github.com/gnemes/go-users/Infrastructure/Serializers"
@@ -25,7 +26,8 @@ var ControllersHttp = []di.Def{
 		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Base{
-				Logger: ctn.Get("Logger").(logger.Logger),
+				Logger:  ctn.Get("Logger").(logger.Logger),
+				Context: ctn.Get("Context").(*context.Context),
 			}, nil
 		},
 	},
