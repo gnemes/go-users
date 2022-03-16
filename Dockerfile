@@ -1,4 +1,4 @@
-FROM golang:1.17.7-alpine
+FROM golang:1.18.0-alpine
 
 WORKDIR /go/src/github.com/gnemes/go-users/
 
@@ -17,6 +17,6 @@ RUN mkdir /root/.ssh/ \
 # Allow private repo pull
 RUN git config --global url."ssh://git@github.com/gnemes".insteadOf "https://github.com/gnemes"
 
-RUN go get -d -v -u github.com/canthefason/go-watcher
+RUN go install github.com/canthefason/go-watcher/cmd/watcher@latest
 RUN go install github.com/canthefason/go-watcher/cmd/watcher@latest
 RUN go install github.com/go-delve/delve/cmd/dlv@latest

@@ -14,6 +14,7 @@ func BuildDi() di.Container {
 	builder.Add(didependencies.Middlewares...)
 	builder.Add(didependencies.Repositories...)
 	builder.Add(didependencies.Serializers...)
+	builder.Add(didependencies.UseCases...)
 	
 	return builder.Build()
 }

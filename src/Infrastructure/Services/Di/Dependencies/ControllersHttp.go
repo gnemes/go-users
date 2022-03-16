@@ -8,6 +8,7 @@ import (
 	queryhttp "github.com/gnemes/go-users/Infrastructure/Controller/Http/Query"
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 	serializers "github.com/gnemes/go-users/Infrastructure/Serializers"
+	usecases "github.com/gnemes/go-users/Domain/UseCases"
 )
 
 var ControllersHttp = []di.Def{
@@ -40,7 +41,9 @@ var ControllersHttp = []di.Def{
 		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Get{
-				Base: ctn.Get("BaseControllerHttp").(*controllerhttp.Base),
+				Base:           ctn.Get("BaseControllerHttp").(*controllerhttp.Base),
+				AdminInputPort: ctn.Get("AdminGetUserInputPort").(usecases.InputPort),
+				AdminUseCase:   ctn.Get("AdminGetUserUseCase").(usecases.UseCase),
 			}, nil
 		},
 	},
@@ -50,8 +53,9 @@ var ControllersHttp = []di.Def{
 		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Base{
-				Logger:  ctn.Get("Logger").(logger.Logger),
-				Context: ctn.Get("Context").(*context.Context),
+				Logger:          ctn.Get("Logger").(logger.Logger),
+				Context:         ctn.Get("Context").(*context.Context),
+				ErrorController: ctn.Get("ErrorControllerHttp").(*controllerhttp.Error),
 			}, nil
 		},
 	},

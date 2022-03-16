@@ -9,3 +9,7 @@ type User struct {
 	Username   string
 	PlatformID string
 }
+
+func (e *User) Validate() error {
+	return nil
+}
