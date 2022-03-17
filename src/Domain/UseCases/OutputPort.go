@@ -6,5 +6,6 @@ import (
 
 type OutputPort interface {
 	SetData(data interface{})
+	GetData() interface{}
 	// SetMetadata(m jsonapi.Meta)
 }

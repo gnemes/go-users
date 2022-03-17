@@ -22,3 +22,7 @@ func (op *MultipleOutputPort) SetMetadata(m jsonapi.Meta) {
 func (op *MultipleOutputPort) SetTotals(t *uint) {
 	op.Totals = t
 }
+
+func (op *MultipleOutputPort) GetData() interface{} {
+	return op.Entities
+}

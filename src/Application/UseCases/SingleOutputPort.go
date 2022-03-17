@@ -17,3 +17,7 @@ func (op *SingleOutputPort) SetData(data interface{}) {
 func (op *SingleOutputPort) SetMetadata(m jsonapi.Meta) {
 	op.Metadata = m
 }
+
+func (op *SingleOutputPort) GetData() interface{} {
+	return op.Entity
+}

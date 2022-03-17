@@ -9,6 +9,7 @@ import (
 	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 	serializers "github.com/gnemes/go-users/Infrastructure/Serializers"
 	usecases "github.com/gnemes/go-users/Domain/UseCases"
+	uuid "github.com/gnemes/go-users/Domain/Services/Uuid"
 )
 
 var ControllersHttp = []di.Def{
@@ -44,6 +45,7 @@ var ControllersHttp = []di.Def{
 				Base:           ctn.Get("BaseControllerHttp").(*controllerhttp.Base),
 				AdminInputPort: ctn.Get("AdminGetUserInputPort").(usecases.InputPort),
 				AdminUseCase:   ctn.Get("AdminGetUserUseCase").(usecases.UseCase),
+				Presenter:      ctn.Get("AdminGetUserPresenter").(usecases.Presenter),
 			}, nil
 		},
 	},
@@ -65,8 +67,9 @@ var ControllersHttp = []di.Def{
 		Unshared: true,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &controllerhttp.Error{
-				Logger: ctn.Get("Logger").(logger.Logger),
-				ErrorSerializer: ctn.Get("HttpErrorSerializer").(*serializers.ErrorSerializer),
+				Logger:          ctn.Get("Logger").(logger.Logger),
+				Uuid:            ctn.Get("Uuid").(uuid.Uuid),
+				ErrorSerializer: ctn.Get("HttpErrorSerializer").(*serializers.Serializer),
 			}, nil
 		},
 	},

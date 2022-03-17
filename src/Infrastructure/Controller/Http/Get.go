@@ -8,9 +8,9 @@ import (
 
 type Get struct {
 	*Base
-	AdminInputPort   usecases.InputPort
-	AdminUseCase     usecases.UseCase
-	Presenter        usecases.Presenter
+	AdminInputPort usecases.InputPort
+	AdminUseCase   usecases.UseCase
+	Presenter      usecases.Presenter
 }
 
 func (c *Get) Execute(w http.ResponseWriter, r *http.Request) {
