@@ -1,7 +1,6 @@
 package serializerentities
 
 import (
-	entities "github.com/gnemes/go-users/Domain/Model/Entities"
 )
 
 type BaseSerializerEntity struct {
@@ -17,6 +16,6 @@ func (bse *BaseSerializerEntity) SetID(id string) error {
 	return nil
 }
 
-func (bse *BaseSerializerEntity) SerializeEntity(e entities.Entity) ([]byte, error) {
+func (bse *BaseSerializerEntity) SerializeEntity() ([]byte, error) {
 	return nil, nil
 }

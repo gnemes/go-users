@@ -8,5 +8,5 @@ type SerializerEntity interface {
 	GetID() string
 	SetID(id string) error
 	Fill(e entities.Entity) error
-	SerializeEntity(e entities.Entity) ([]byte, error)
+	SerializeEntity() ([]byte, error)
 }

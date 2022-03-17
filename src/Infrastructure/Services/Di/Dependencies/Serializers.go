@@ -18,7 +18,7 @@ var Serializers = []di.Def{
 				BaseSerializerEntity: base,
 			}
 			return &serializers.Serializer{
-				SerializerEntity: entity,
+				Entity: entity,
 			}, nil
 		},
 	},
@@ -32,7 +32,7 @@ var Serializers = []di.Def{
 				BaseSerializerEntity: base,
 			}
 			return &serializers.Serializer{
-				SerializerEntity: entity,
+				Entity: entity,
 			}, nil
 		},
 	},

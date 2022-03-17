@@ -9,12 +9,17 @@ import (
 )
 
 type Serializer struct {
-	serializerentities.SerializerEntity
+	Entity serializerentities.SerializerEntity
 }
 
 func (s *Serializer) Serialize(data interface{}, meta jsonapi.Meta) ([]byte, error) {
 	if e, ok := data.(entities.Entity); ok {
-		serializedData, errSerialize := s.SerializeEntity(e)
+		err := s.Entity.Fill(e)
+		if err != nil {
+			return nil, err
+		}
+
+		serializedData, errSerialize := s.Entity.SerializeEntity()
 		if errSerialize != nil {
 			return nil, errSerialize
 		}
@@ -22,12 +27,7 @@ func (s *Serializer) Serialize(data interface{}, meta jsonapi.Meta) ([]byte, err
 		if serializedData != nil {
 			return serializedData, nil
 		} else {
-			err := s.Fill(e)
-			if err != nil {
-				return nil, err
-			}
-		
-			return jsonapi.Marshal(s, meta)
+			return jsonapi.Marshal(s.Entity, meta)
 		}
 	} else {
 		return nil, errors.New("Invalid data to serialize")

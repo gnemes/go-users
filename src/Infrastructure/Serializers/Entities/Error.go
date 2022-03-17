@@ -39,14 +39,9 @@ func (se *Error) Fill(e entities.Entity) error {
 	return nil
 }
 
-func (se *Error) SerializeEntity(e entities.Entity) ([]byte, error) {
+func (se *Error) SerializeEntity() ([]byte, error) {
 	var errors []*Error
 	
-	err := se.Fill(e)
-	if err != nil {
-		return nil, err
-	}
-
 	errors = append(errors, se)
 	
 	errorContainer := ErrorContainer{
