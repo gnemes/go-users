@@ -1,8 +1,9 @@
 module github.com/gnemes/go-users
 
-go 1.17
+go 1.18
 
 require (
+	github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/sarulabs/di/v2 v2.4.2 // indirect

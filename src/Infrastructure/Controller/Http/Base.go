@@ -6,6 +6,7 @@ import (
 )
 
 type Base struct {
-	Logger  logger.Logger
-	Context *context.Context
+	Logger          logger.Logger
+	Context         *context.Context
+	ErrorController *Error
 }
