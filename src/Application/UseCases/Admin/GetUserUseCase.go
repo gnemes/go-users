@@ -13,15 +13,21 @@ type GetUserUseCase struct {
 }
 
 func (uc *GetUserUseCase) Execute() error {
+	uc.Logger.Debugf("Use Case / Admin / GetUserUseCase / Execute()")
+	defer uc.Logger.Debugf("Use Case / Admin / GetUserUseCase / Build() Execute...")
+
 	request := uc.InputPort.Request	
 
-	uc.Logger.Debugf("###### REQUEST :: %v", request)
-
 	// Dummy response
+	platformResponse := &entities.Platform{
+		ID: request.PlatformID,
+		Name: "FooBarPlatform",
+	}
+
 	userResponse := &entities.User{
 		ID: request.UserID,
 		Username: "foo@bar.com",
-		PlatformID: request.PlatformID,
+		Platform: platformResponse,
 	}
 
 	uc.OutputPort.SetData(userResponse)

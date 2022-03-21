@@ -7,11 +7,14 @@ import (
 	jsonapitypes "github.com/gnemes/go-users/Infrastructure/Serializers/JsonapiTypes"
 )
 
+const (
+	JsonapiPlatformName = "platform"
+)
+
 type User struct {
 	*BaseSerializerEntity `json:"-"`
 	
 	Username   string `json:"username"`
-	PlatformID string `json:"platform-id"`
 }
 
 func (se *User) GetName() string {
@@ -21,8 +24,9 @@ func (se *User) GetName() string {
 func (se *User) Fill(e entities.Entity) error {
 	if user, ok := e.(*entities.User); ok {
 		se.Username   = user.Username
-		se.PlatformID = user.PlatformID
 		se.SetID(user.ID)
+
+		se.AddRelationship("PlatformSerializer", user.Platform, jsonapitypes.JsonapiPlatformType, JsonapiPlatformName)
 	} else {
 		return errors.New("Invalid entity for this serializer")
 	}

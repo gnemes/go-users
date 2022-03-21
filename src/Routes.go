@@ -36,7 +36,7 @@ func fetchHandleFunc(container di.Container, controller string) func(w http.Resp
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestContainer, _ := container.SubContainer()
 		defer requestContainer.Delete()
-	
+
 		// Get Request middlewares
 		credentialsMiddleware := requestContainer.Get("CredentialsMiddleware").(*middleware.CredentialsMiddleware)
 		requestIDMiddleware := requestContainer.Get("RequestIDMiddleware").(*middleware.RequestIDMiddleware)

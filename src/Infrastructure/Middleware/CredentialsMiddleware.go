@@ -52,7 +52,7 @@ func (m *CredentialsMiddleware) Execute(next func(w http.ResponseWriter, r *http
 				return
 			}
 
-			if user.PlatformID != platform.ID {
+			if user.Platform.ID != platform.ID {
 				// User does not belongs to platform
 				m.Logger.Errorf("Unauthorized request. User does not belongs to platform.")
 				m.ErrorController.WriteHttpError(&domainerrors.UnauthorizeError{Err: "Unauthorized"}, w)

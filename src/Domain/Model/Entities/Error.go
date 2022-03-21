@@ -8,6 +8,10 @@ type Error struct {
 	Detail string
 }
 
+func (e *Error) GetID() string {
+	return e.ID
+}
+
 func (e *Error) Validate() error {
 	return nil
 }

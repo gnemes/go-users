@@ -5,11 +5,11 @@ import (
 
 	entities "github.com/gnemes/go-users/Domain/Model/Entities"
 	jsonapi "github.com/gnemes/go-users/Infrastructure/Services/Jsonapi"
-	serializerentities "github.com/gnemes/go-users/Infrastructure/Serializers/Entities"
+	serializersdomain "github.com/gnemes/go-users/Domain/Serializers"
 )
 
 type Serializer struct {
-	Entity serializerentities.SerializerEntity
+	Entity serializersdomain.SerializerEntity
 }
 
 func (s *Serializer) Serialize(data interface{}, meta jsonapi.Meta) ([]byte, error) {
@@ -19,7 +19,7 @@ func (s *Serializer) Serialize(data interface{}, meta jsonapi.Meta) ([]byte, err
 			return nil, err
 		}
 
-		serializedData, errSerialize := s.Entity.SerializeEntity()
+		serializedData, errSerialize := s.Entity.Serialize()
 		if errSerialize != nil {
 			return nil, errSerialize
 		}
@@ -32,4 +32,12 @@ func (s *Serializer) Serialize(data interface{}, meta jsonapi.Meta) ([]byte, err
 	} else {
 		return nil, errors.New("Invalid data to serialize")
 	}
+}
+
+func (s *Serializer) Fill(e entities.Entity) error {
+	return s.Entity.Fill(e)
+}
+
+func (s *Serializer) GetSerializerEntity() serializersdomain.SerializerEntity {
+	return s.Entity
 }

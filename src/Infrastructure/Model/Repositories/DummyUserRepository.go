@@ -16,11 +16,16 @@ func (r *DummyUserRepository) FindByID(userID string) *entities.User {
 	dummyID := "5678"
 	dummyPlatformID := "1234"
 
+	dummyPlatform := &entities.Platform{
+		ID:   dummyPlatformID,
+		Name: "Dummy Platform",
+	}
+		
 	if userID == dummyID {
 		dummyUser := &entities.User{
 			ID:   dummyID,
-			PlatformID: dummyPlatformID,
 			Username: "Dummy User",
+			Platform: dummyPlatform,
 		}
 	
 		return dummyUser
