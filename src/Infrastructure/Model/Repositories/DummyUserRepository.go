@@ -15,6 +15,7 @@ func (r *DummyUserRepository) FindByID(userID string) *entities.User {
 
 	dummyID := "5678"
 	dummyPlatformID := "1234"
+	dummyUserProfileID := "102938"
 
 	dummyPlatform := &entities.Platform{
 		ID:   dummyPlatformID,
@@ -22,11 +23,24 @@ func (r *DummyUserRepository) FindByID(userID string) *entities.User {
 	}
 		
 	if userID == dummyID {
-		dummyUser := &entities.User{
-			ID:   dummyID,
-			Username: "Dummy User",
-			Platform: dummyPlatform,
+		age := 42
+		phone := "1234566677"
+		dummyUserProfile := &entities.UserProfile{
+			ID:       dummyUserProfileID,
+			Name:     "Dummy",
+			LastName: "User",
+			Age:      &age,
+			Phone:    &phone,
 		}
+
+		dummyUser := &entities.User{
+			ID:          dummyID,
+			Username:    "DummyUser",
+			Platform:    dummyPlatform,
+			UserProfile: dummyUserProfile,
+		}
+
+		r.Logger.Debugf("USER REPOSITORY :: %v", dummyUser)
 	
 		return dummyUser
 	}

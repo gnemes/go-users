@@ -5,12 +5,14 @@ import (
 
 	entities "github.com/gnemes/go-users/Domain/Model/Entities"
 	jsonapi "github.com/gnemes/go-users/Infrastructure/Services/Jsonapi"
+	logger "github.com/gnemes/go-users/Domain/Services/Logger"
 	serializers "github.com/gnemes/go-users/Domain/Serializers"
 	serializersimpl "github.com/gnemes/go-users/Infrastructure/Serializers"
 )
 
 type BaseSerializerEntity struct {
 	Container     di.Container                   `json:"-"`
+	Logger        logger.Logger                  `json:"-"`
 	ID            string                         `json:"-"`
 	Relationships []serializersimpl.Relationship `json:"-"`
 }
