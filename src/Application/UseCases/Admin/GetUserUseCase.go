@@ -24,10 +24,22 @@ func (uc *GetUserUseCase) Execute() error {
 		Name: "FooBarPlatform",
 	}
 
+	dummyUserProfileID := "102938"
+	age := 42
+	phone := "1234566677"
+	userProfile := &entities.UserProfile{
+		ID:       dummyUserProfileID,
+		Name:     "Dummy",
+		LastName: "User",
+		Age:      &age,
+		Phone:    &phone,
+	}
+
 	userResponse := &entities.User{
 		ID: request.UserID,
 		Username: "foo@bar.com",
 		Platform: platformResponse,
+		UserProfile: userProfile,
 	}
 
 	uc.OutputPort.SetData(userResponse)
