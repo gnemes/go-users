@@ -24,17 +24,18 @@ func (uc *GetUserUseCase) Execute() error {
 		Name: "FooBarPlatform",
 	}
 
+	var userProfile *entities.UserProfile
+	
 	dummyUserProfileID := "102938"
 	age := 42
 	phone := "1234566677"
-	userProfile := &entities.UserProfile{
+	userProfile = &entities.UserProfile{
 		ID:       dummyUserProfileID,
 		Name:     "Dummy",
 		LastName: "User",
 		Age:      &age,
 		Phone:    &phone,
 	}
-
 	userResponse := &entities.User{
 		ID: request.UserID,
 		Username: "foo@bar.com",

@@ -1,6 +1,8 @@
 package serializerentities
 
 import (
+	"reflect"
+
 	di "github.com/sarulabs/di/v2"
 
 	entities "github.com/gnemes/go-users/Domain/Model/Entities"
@@ -11,10 +13,11 @@ import (
 )
 
 type BaseSerializerEntity struct {
-	Container     di.Container                   `json:"-"`
-	Logger        logger.Logger                  `json:"-"`
-	ID            string                         `json:"-"`
-	Relationships []serializersimpl.Relationship `json:"-"`
+	Container           di.Container                              `json:"-"`
+	Logger              logger.Logger                             `json:"-"`
+	ID                  string                                    `json:"-"`
+	ToOneRelationships  []serializersimpl.Relationship            `json:"-"`
+	ToManyRelationships map[string][]serializersimpl.Relationship `json:"-"`
 }
 
 func (bse *BaseSerializerEntity) GetID() string {
@@ -30,26 +33,60 @@ func (bse *BaseSerializerEntity) Serialize() ([]byte, error) {
 	return nil, nil
 }
 
-func (bse *BaseSerializerEntity) AddRelationship(SerializerName string, e entities.Entity, Type string, Name string) {
-	s := bse.newSerializer(SerializerName)
-	if s != nil {
-		err := s.Fill(e)
-		if err == nil {
-			relationship := serializersimpl.Relationship{
-				Type: Type,
-				Name: Name,
-				Entity: s.GetSerializerEntity(),
+func (bse *BaseSerializerEntity) AddToOneRelationship(SerializerName string, e entities.Entity, Type string, Name string) {
+	var entity serializers.SerializerEntity
+
+	if !reflect.ValueOf(e).IsNil() {
+		s := bse.newSerializer(SerializerName)
+		if s != nil {
+			err := s.Fill(e)
+			if err == nil {
+				entity = s.GetSerializerEntity()
 			}
-		
-			bse.Relationships = append(bse.Relationships, relationship)
 		}
+	}
+
+	relationship := serializersimpl.Relationship{
+		Type: Type,
+		Name: Name,
+		Entity: entity,
+	}
+
+	bse.ToOneRelationships = append(bse.ToOneRelationships, relationship)
+}
+
+func (bse *BaseSerializerEntity) AddToManyRelationship(SerializerName string, d interface{}, Type string, Name string) {
+	if e, ok := d.([]entities.Entity); ok {
+		for _, entity := range e {
+			s := bse.newSerializer(SerializerName)
+			if s != nil {
+				err := s.Fill(entity)
+				if err == nil {
+					relationship := serializersimpl.Relationship{
+						Type: Type,
+						Name: Name,
+						Entity: s.GetSerializerEntity(),
+					}
+
+					bse.ToManyRelationships[Name] = append(bse.ToManyRelationships[Name], relationship)
+				}
+			}
+		}
+	}
+
+	if bse.ToManyRelationships[Name] == nil || len(bse.ToManyRelationships[Name]) == 0 {
+		relationship := serializersimpl.Relationship{
+			Type: Type,
+			Name: Name,
+		}
+		bse.ToManyRelationships[Name] = append(bse.ToManyRelationships[Name], relationship)
 	}
 }
 
 func (bse *BaseSerializerEntity) GetReferences() []jsonapi.Reference {
 	var references []jsonapi.Reference
 
-	for _, relationship := range bse.Relationships {
+	for _, relationship := range bse.ToOneRelationships {
 		reference := jsonapi.Reference{
 			Type:        relationship.Type,
 			Name:        relationship.Name,
@@ -59,6 +96,16 @@ func (bse *BaseSerializerEntity) GetReferences() []jsonapi.Reference {
 		references = append(references, reference)
 	}
 
+	for _, relationship := range bse.ToManyRelationships {
+		first := relationship[0]
+		reference := jsonapi.Reference{
+			Type:        first.Type,
+			Name:        first.Name,
+			IsNotLoaded: first.IsNotLoaded,
+		}
+
+		references = append(references, reference)
+	}
 
 	return references
 }
@@ -66,13 +113,15 @@ func (bse *BaseSerializerEntity) GetReferences() []jsonapi.Reference {
 func (bse *BaseSerializerEntity) GetReferencedIDs() []jsonapi.ReferenceID {
 	var references []jsonapi.ReferenceID
 
-	for _, relationship := range bse.Relationships {
-		reference := jsonapi.ReferenceID{
-			Type: relationship.Type, 
-			Name: relationship.Name,
-			ID: relationship.Entity.GetID(),
+	for _, relationship := range bse.ToOneRelationships {
+		if relationship.Entity != nil {
+			reference := jsonapi.ReferenceID{
+				Type: relationship.Type, 
+				Name: relationship.Name,
+				ID: relationship.Entity.GetID(),
+			}
+			references = append(references, reference)
 		}
-		references = append(references, reference)
 	}
 
 	return references
@@ -81,10 +130,12 @@ func (bse *BaseSerializerEntity) GetReferencedIDs() []jsonapi.ReferenceID {
 func (bse *BaseSerializerEntity) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	var includes []jsonapi.MarshalIdentifier
 
-	for _, relationship := range bse.Relationships {
+	for _, relationship := range bse.ToOneRelationships {
 		// if s.Query.Include(jsonapitypes.RecoProgramBudgetsJSONAPIName) {
 		if true {
-			includes = append(includes, relationship.Entity)
+			if relationship.Entity != nil {
+				includes = append(includes, relationship.Entity)
+			}
 		}
 	}
 

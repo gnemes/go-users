@@ -4,8 +4,9 @@ type User struct {
 	ID         string
 	Username   string
 
-	Platform    *Platform
-	UserProfile *UserProfile
+	Platform         *Platform
+	UserProfile      *UserProfile
+	AdditionalEmails []*AdditionalEmail
 }
 
 func (e *User) GetID() string {

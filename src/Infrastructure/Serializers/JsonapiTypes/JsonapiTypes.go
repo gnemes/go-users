@@ -5,4 +5,5 @@ const (
 	JsonapiUserType = "users"
 	JsonapiUserProfileType = "users-profiles"
 	JsonapiPlatformType = "platforms"
+	JsonapiAdditionalEmailType = "additional-emails"
 )
