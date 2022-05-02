@@ -10,6 +10,7 @@ import (
 const (
 	JsonapiPlatformName = "platform"
 	JsonapiUserProfileName = "profile"
+	JsonapiAdditionalEmailsName = "emails"
 )
 
 type User struct {
@@ -27,13 +28,13 @@ func (se *User) Fill(e entities.Entity) error {
 		se.Username   = user.Username
 		se.SetID(user.ID)
 
-		// Platform
-		se.AddRelationship("PlatformSerializer", user.Platform, jsonapitypes.JsonapiPlatformType, JsonapiPlatformName)
-
 		// User Profile
-		if user.UserProfile != nil {
-			se.AddRelationship("UserProfileSerializer", user.UserProfile, jsonapitypes.JsonapiUserProfileType, JsonapiUserProfileName)
-		}
+		se.AddToOneRelationship("UserProfileSerializer", user.UserProfile, jsonapitypes.JsonapiUserProfileType, JsonapiUserProfileName)
+
+		// Platform
+		se.AddToOneRelationship("PlatformSerializer", user.Platform, jsonapitypes.JsonapiPlatformType, JsonapiPlatformName)
+
+		se.AddToManyRelationship("AdditionalEmailSerializer", user.AdditionalEmails, jsonapitypes.JsonapiAdditionalEmailType, JsonapiAdditionalEmailsName)
 	} else {
 		return errors.New("Invalid entity for this serializer")
 	}
